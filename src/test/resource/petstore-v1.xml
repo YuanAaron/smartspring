@@ -4,6 +4,6 @@
          xsi:schemaLocation="http://www.springframework.org/schema/beans
          http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <bean id="petStore" class="org.simplespring.service.v1.PetStoreService"></bean>
+    <bean id="petStore" class="com.smartspring.service.v1.PetStoreService"></bean>
 
 </beans>
