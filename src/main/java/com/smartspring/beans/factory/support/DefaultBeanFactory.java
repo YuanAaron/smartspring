@@ -62,8 +62,25 @@ public class DefaultBeanFactory implements BeanFactory {
         return this.beanDefinitionMap.get(beanId);
     }
 
+    //从BeanDefinition变成Bean的实例
     @Override
     public Object getBean(String beanId) {
+        BeanDefinition bd = this.getBeanDefinition(beanId);
+        if(bd == null){
+            return null;
+        }
+        ClassLoader cl = ClassUtils.getDefaultClassLoader();
+        String beanClassName = bd.getBeanClassName();
+        try {
+            Class<?> clz = cl.loadClass(beanClassName);
+            return clz.newInstance(); // 前提：beanClassName类需要有无参构造函数
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
         return null;
     }
 }
