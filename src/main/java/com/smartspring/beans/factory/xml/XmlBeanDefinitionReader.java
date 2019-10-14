@@ -4,9 +4,8 @@ import com.smartspring.beans.BeanDefinition;
 import com.smartspring.beans.factory.BeanDefinitionStoreException;
 import com.smartspring.beans.factory.support.BeanDefinitionRegistry;
 import com.smartspring.beans.factory.support.GenericBeanDefinition;
-import com.smartspring.util.ClassUtils;
+import com.smartspring.core.io.Resource;
 import org.dom4j.Document;
-import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import java.io.IOException;
@@ -24,11 +23,10 @@ public class XmlBeanDefinitionReader {
         this.registry = registry;
     }
 
-    public void loadBeanDefinition(String configFile) {
+    public void loadBeanDefinition(Resource resource) {
         InputStream is = null;
         try{
-            ClassLoader cl = ClassUtils.getDefaultClassLoader();
-            is = cl.getResourceAsStream(configFile);
+            is=resource.getInputStream();
 
             SAXReader reader = new SAXReader();
             Document doc = reader.read(is); // doc对应XML文件
@@ -42,8 +40,8 @@ public class XmlBeanDefinitionReader {
                 BeanDefinition bd = new GenericBeanDefinition(id,beanClassName);
                 this.registry.registryBeanDefinition(id, bd);
             }
-        } catch (DocumentException e) {
-            throw new BeanDefinitionStoreException("IOException parsing XML document from " + configFile,e);
+        } catch (Exception e) {
+            throw new BeanDefinitionStoreException("IOException parsing XML document from " + resource.getDescription(),e);
         }finally{
             if(is != null){
                 try {

@@ -6,6 +6,7 @@ import com.smartspring.beans.factory.BeanDefinitionStoreException;
 import com.smartspring.beans.factory.BeanFactory;
 import com.smartspring.beans.factory.support.DefaultBeanFactory;
 import com.smartspring.beans.factory.xml.XmlBeanDefinitionReader;
+import com.smartspring.core.io.ClassPathResource;
 import com.smartspring.service.v1.PetStoreService;
 import org.junit.Assert;
 import org.junit.Before;
@@ -26,7 +27,7 @@ public class BeanFactoryTest {
 
     @Test
     public void testGetBean() {
-        reader.loadBeanDefinition("petstore-v1.xml");
+        reader.loadBeanDefinition(new ClassPathResource("petstore-v1.xml"));
         //获取Bean的定义
         BeanDefinition bd = factory.getBeanDefinition("petStore");
         assertEquals("com.smartspring.service.v1.PetStoreService",bd.getBeanClassName());
@@ -36,7 +37,7 @@ public class BeanFactoryTest {
 
     @Test
     public void testInvalidBean() {
-        reader.loadBeanDefinition("petstore-v1.xml");
+        reader.loadBeanDefinition(new ClassPathResource("petstore-v1.xml"));
         try{
             factory.getBean("invalidBean");
         }catch(BeanCreationException e){
@@ -48,7 +49,7 @@ public class BeanFactoryTest {
     @Test
     public void testInvalidXML(){
         try{
-            reader.loadBeanDefinition("xxx.xml");
+            reader.loadBeanDefinition(new ClassPathResource("xxx.xml"));
         }catch(BeanDefinitionStoreException e){
             return;
         }
