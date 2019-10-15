@@ -1,22 +1,16 @@
 package com.smartspring.Context.support;
 
-import com.smartspring.Context.ApplicationContext;
-import com.smartspring.beans.factory.support.DefaultBeanFactory;
-import com.smartspring.beans.factory.xml.XmlBeanDefinitionReader;
 import com.smartspring.core.io.FileSystemResource;
+import com.smartspring.core.io.Resource;
 
-public class FileSystemXmlApplicationContext implements ApplicationContext {
-
-    private DefaultBeanFactory factory=null;
+public class FileSystemXmlApplicationContext extends AbstractApplicationContext {
 
     public FileSystemXmlApplicationContext(String configFile) {
-        factory = new DefaultBeanFactory();
-        XmlBeanDefinitionReader reader=new XmlBeanDefinitionReader(factory);
-        reader.loadBeanDefinition(new FileSystemResource(configFile));
+        super(configFile);
     }
 
     @Override
-    public Object getBean(String beanId) {
-        return this.factory.getBean(beanId);
+    protected Resource getResourceByPath(String path) {
+        return new FileSystemResource(path);
     }
 }
