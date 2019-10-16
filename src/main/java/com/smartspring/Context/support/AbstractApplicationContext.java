@@ -16,13 +16,16 @@ public abstract class AbstractApplicationContext implements ApplicationContext {
     private DefaultBeanFactory factory=null;
     private ClassLoader beanClassLoader=null;
 
-    public AbstractApplicationContext(String configFile) {
+    public AbstractApplicationContext(String configFile,ClassLoader beanClassLoader) {
         factory = new DefaultBeanFactory();
         XmlBeanDefinitionReader reader=new XmlBeanDefinitionReader(factory);
         Resource resource=getResourceByPath(configFile);
         reader.loadBeanDefinition(resource);
-        //设置和获取beanClassLoader的方法有问题，后面修复
-        factory.setBeanClassLoader(this.getBeanClassLoader());
+        factory.setBeanClassLoader(beanClassLoader);
+    }
+
+    public AbstractApplicationContext(String configFile) {
+        this(configFile,ClassUtils.getDefaultClassLoader());
     }
 
     protected abstract Resource getResourceByPath(String path);
