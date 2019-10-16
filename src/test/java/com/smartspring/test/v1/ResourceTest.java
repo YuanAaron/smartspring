@@ -30,7 +30,7 @@ public class ResourceTest {
     @Test
     public void testFileSystemResource() throws IOException {
         //不好的写法，这里仅仅是为了展示FileSystemResource,如何处理留作作业
-        Resource r=new FileSystemResource("E:\\IDEAworkspace\\smartspring\\src\\test\\resource\\petstore-v1.xml");
+        Resource r=new FileSystemResource("src\\test\\resource\\petstore-v1.xml");
         InputStream is= null;
         try {
             is=r.getInputStream();
