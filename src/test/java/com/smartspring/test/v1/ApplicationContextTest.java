@@ -19,7 +19,7 @@ public class ApplicationContextTest {
     @Test
     public void testGetBeanFromFileSystemContext() {
         //注意：这里仍然是hardcode了一个本地路径，这是不好的实践！！！如何处理，留作作业
-        ApplicationContext context=new FileSystemXmlApplicationContext("E:\\IDEAworkspace\\petstore-v1.xml");
+        ApplicationContext context=new FileSystemXmlApplicationContext("E:\\IDEAworkspace\\smartspring\\src\\test\\resource\\petstore-v1.xml");
         PetStoreService petStore=(PetStoreService)context.getBean("petStore");
         Assert.assertNotNull(petStore);
     }
