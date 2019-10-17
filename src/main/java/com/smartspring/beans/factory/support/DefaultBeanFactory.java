@@ -2,6 +2,8 @@ package com.smartspring.beans.factory.support;
 
 import com.smartspring.beans.BeanDefinition;
 import com.smartspring.beans.PropertyValue;
+import com.smartspring.beans.SimpleTypeConverter;
+import com.smartspring.beans.TypeConverter;
 import com.smartspring.beans.factory.BeanCreationException;
 import com.smartspring.beans.factory.BeanFactory;
 import com.smartspring.beans.factory.config.ConfigurableBeanFactory;
@@ -79,6 +81,7 @@ public class DefaultBeanFactory extends DefaultSingletonBeanRegistry
                 String propertyName = pv.getName();
                 Object originalValue = pv.getValue();
                 Object resolvedValue = valueResolver.resolveValueIfNecessary(originalValue);
+                TypeConverter converter = new SimpleTypeConverter();
 
                 //假设originalValue表示的是ref="accountDao",那么resolvedValue表示已经通过resolver得到的accountDao的实例。
                 //接下来如何调用v2中PetStoreService的setAccountDao方法将resolvedValue赋值给accountDao属性呢？
@@ -86,7 +89,8 @@ public class DefaultBeanFactory extends DefaultSingletonBeanRegistry
                 PropertyDescriptor[] pds = beanInfo.getPropertyDescriptors();
                 for (PropertyDescriptor pd : pds) {
                     if(pd.getName().equals(propertyName)){
-                        pd.getWriteMethod().invoke(bean, resolvedValue);
+                        Object converteredValue = converter.convertIfNecessary(resolvedValue, pd.getPropertyType());
+                        pd.getWriteMethod().invoke(bean, converteredValue);
                         break;
                     }
                 }

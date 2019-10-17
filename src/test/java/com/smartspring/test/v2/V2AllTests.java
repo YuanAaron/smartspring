@@ -7,6 +7,9 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
         BeanDefinitionV2.class,
         BeanDefinitionValueResolverTest.class,
-        ApplicationContextTestV2.class})
+        ApplicationContextTestV2.class,
+        CustomNumberEditorTest.class,
+        CustomBooleanEditorTest.class,
+        TypeConverterTest.class})
 public class V2AllTests {
 }
