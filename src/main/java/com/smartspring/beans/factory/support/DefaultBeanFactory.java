@@ -77,6 +77,9 @@ public class DefaultBeanFactory extends DefaultSingletonBeanRegistry
 
         BeanDefinitionValueResolver valueResolver = new BeanDefinitionValueResolver(this);
         try{
+            BeanInfo beanInfo = Introspector.getBeanInfo(bean.getClass());
+            PropertyDescriptor[] pds = beanInfo.getPropertyDescriptors();
+
             for (PropertyValue pv : pvs){
                 String propertyName = pv.getName();
                 Object originalValue = pv.getValue();
@@ -85,8 +88,6 @@ public class DefaultBeanFactory extends DefaultSingletonBeanRegistry
 
                 //假设originalValue表示的是ref="accountDao",那么resolvedValue表示已经通过resolver得到的accountDao的实例。
                 //接下来如何调用v2中PetStoreService的setAccountDao方法将resolvedValue赋值给accountDao属性呢？
-                BeanInfo beanInfo = Introspector.getBeanInfo(bean.getClass());
-                PropertyDescriptor[] pds = beanInfo.getPropertyDescriptors();
                 for (PropertyDescriptor pd : pds) {
                     if(pd.getName().equals(propertyName)){
                         Object converteredValue = converter.convertIfNecessary(resolvedValue, pd.getPropertyType());
