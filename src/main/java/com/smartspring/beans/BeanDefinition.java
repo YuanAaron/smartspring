@@ -1,5 +1,7 @@
 package com.smartspring.beans;
 
+import java.util.List;
+
 public interface BeanDefinition {
     public static final String SCOPE_SINGLETON="singleton";
     public static final String SCOPE_PROTOTYPE="prototype";
@@ -10,4 +12,5 @@ public interface BeanDefinition {
     void setScope(String scope);
 
     String getBeanClassName();
+    List<PropertyValue> getPropertyValues();
 }

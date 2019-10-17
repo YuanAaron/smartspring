@@ -1,6 +1,10 @@
 package com.smartspring.beans.factory.support;
 
 import com.smartspring.beans.BeanDefinition;
+import com.smartspring.beans.PropertyValue;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class GenericBeanDefinition implements BeanDefinition {
     private String id; //对应xml中的id
@@ -8,6 +12,7 @@ public class GenericBeanDefinition implements BeanDefinition {
     private boolean singleton=true;
     private boolean prototype=false;
     private String scope=SCOPE_DEFAULT;
+    private List<PropertyValue> propertyValues=new ArrayList<>();
 
     public GenericBeanDefinition(String id, String beanClassName) {
         this.id=id;
@@ -17,6 +22,11 @@ public class GenericBeanDefinition implements BeanDefinition {
     @Override
     public String getBeanClassName() {
         return this.beanClassName;
+    }
+
+    @Override
+    public List<PropertyValue> getPropertyValues() {
+        return this.propertyValues;
     }
 
     @Override

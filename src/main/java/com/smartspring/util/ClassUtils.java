@@ -1,6 +1,6 @@
 package com.smartspring.util;
 
-public class ClassUtils {
+public abstract class ClassUtils { //定义为abstract是不想让调用者实例化
     
     public static ClassLoader getDefaultClassLoader() {
         ClassLoader cl = null;
