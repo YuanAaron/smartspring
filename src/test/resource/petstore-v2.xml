@@ -7,6 +7,7 @@
     <bean id="petStore" class="com.smartspring.service.v2.PetStoreService" >
         <property name="accountDao" ref="accountDao"/>
         <property name="itemDao" ref="itemDao"/>
+        <property name="owner" value="zhangsan"/>
     </bean>
 
     <bean id="accountDao"  class="com.smartspring.dao.v2.AccountDao"></bean>
