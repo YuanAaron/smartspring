@@ -8,6 +8,7 @@ import com.smartspring.beans.factory.BeanCreationException;
 import com.smartspring.beans.factory.BeanFactory;
 import com.smartspring.beans.factory.config.ConfigurableBeanFactory;
 import com.smartspring.util.ClassUtils;
+import org.apache.commons.beanutils.BeanUtils;
 
 import java.beans.BeanInfo;
 import java.beans.Introspector;
@@ -54,7 +55,8 @@ public class DefaultBeanFactory extends DefaultSingletonBeanRegistry
         //实例化Bean
         Object bean = instantiateBean(bd);
         //设置属性
-        populateBean(bd,bean);
+        //populateBean(bd,bean);
+        populateBeanUseCommonBeanUtils(bd,bean);
         return bean;
     }
     
@@ -95,6 +97,26 @@ public class DefaultBeanFactory extends DefaultSingletonBeanRegistry
                         break;
                     }
                 }
+            }
+        }catch(Exception ex){
+            throw new BeanCreationException("Failed to obtain BeanInfo for class [" + bd.getBeanClassName() + "]", ex);
+        }
+    }
+
+    private void populateBeanUseCommonBeanUtils(BeanDefinition bd, Object bean){
+        List<PropertyValue> pvs = bd.getPropertyValues();
+        if (pvs == null || pvs.isEmpty()) {
+            return;
+        }
+
+        BeanDefinitionValueResolver valueResolver = new BeanDefinitionValueResolver(this);
+        try{
+            for (PropertyValue pv : pvs){
+                String propertyName = pv.getName();
+                Object originalValue = pv.getValue();
+                Object resolvedValue = valueResolver.resolveValueIfNecessary(originalValue);
+                //将resolvedValue赋值给v2中PetStoreService类的accountDao属性以及实现int、boolean属性所需类型转化的一条捷径
+                BeanUtils.setProperty(bean,propertyName,resolvedValue);
             }
         }catch(Exception ex){
             throw new BeanCreationException("Failed to obtain BeanInfo for class [" + bd.getBeanClassName() + "]", ex);
