@@ -1,0 +1,27 @@
+package com.smartspring.service.v3;
+
+import com.smartspring.dao.v3.AccountDao;
+import com.smartspring.dao.v3.ItemDao;
+
+public class PetStoreService {
+    private AccountDao accountDao;
+    private ItemDao  itemDao;
+    private int version;
+
+    public PetStoreService(AccountDao accountDao, ItemDao itemDao, int version){
+        this.accountDao = accountDao;
+        this.itemDao = itemDao;
+        this.version = version;
+    }
+    public int getVersion() {
+        return version;
+    }
+
+    public AccountDao getAccountDao() {
+        return accountDao;
+    }
+
+    public ItemDao getItemDao() {
+        return itemDao;
+    }
+}
