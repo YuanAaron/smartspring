@@ -37,6 +37,11 @@ public class GenericBeanDefinition implements BeanDefinition {
     }
 
     @Override
+    public String getID() {
+        return this.id;
+    }
+
+    @Override
     public boolean isSingleton() {
         return this.singleton;
     }

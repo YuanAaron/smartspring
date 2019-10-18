@@ -1,13 +1,14 @@
 package com.smartspring.beans.factory.support;
 
+import com.smartspring.beans.factory.BeanFactory;
 import com.smartspring.beans.factory.config.RuntimeBeanReference;
 import com.smartspring.beans.factory.config.TypedStringValue;
 
 //Resolver用于将一个ref或value转换成实例
 public class BeanDefinitionValueResolver {
-    private final DefaultBeanFactory beanFactory;
+    private final BeanFactory beanFactory;
 
-    public BeanDefinitionValueResolver(DefaultBeanFactory beanFactory) {
+    public BeanDefinitionValueResolver(BeanFactory beanFactory) {
         this.beanFactory = beanFactory;
     }
 
