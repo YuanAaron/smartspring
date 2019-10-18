@@ -42,6 +42,11 @@ public class GenericBeanDefinition implements BeanDefinition {
     }
 
     @Override
+    public boolean hasConstructorArgumentValues() {
+        return !this.constructorArgument.isEmpty();
+    }
+
+    @Override
     public boolean isSingleton() {
         return this.singleton;
     }
