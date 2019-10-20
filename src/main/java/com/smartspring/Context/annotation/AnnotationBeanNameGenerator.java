@@ -6,10 +6,12 @@ import com.smartspring.beans.factory.support.BeanDefinitionRegistry;
 import com.smartspring.beans.factory.support.BeanNameGenerator;
 import com.smartspring.core.annotation.AnnotationAttributes;
 import com.smartspring.core.type.AnnotationMetadata;
+import com.smartspring.stereotype.Component;
 import com.smartspring.util.ClassUtils;
 import com.smartspring.util.StringUtils;
 
 import java.beans.Introspector;
+import java.util.Map;
 import java.util.Set;
 
 public class AnnotationBeanNameGenerator implements BeanNameGenerator {
@@ -36,7 +38,7 @@ public class AnnotationBeanNameGenerator implements BeanNameGenerator {
         String beanName = null;
         for (String type : types) {
             AnnotationAttributes attributes = amd.getAnnotationAttributes(type);
-            if (attributes.get("value") != null) {
+            if (this.isStereotypeWithNameValue(type,attributes)) {
                 Object value = attributes.get("value");
                 if (value instanceof String) {
                     String strVal = (String) value;
@@ -49,6 +51,14 @@ public class AnnotationBeanNameGenerator implements BeanNameGenerator {
         return beanName;
     }
 
+    protected boolean isStereotypeWithNameValue(String annotationType, Map<String, Object> attributes) {
+        boolean isStereotype = annotationType.equals(Component.class.getName()); /*||
+				(metaAnnotationTypes != null && metaAnnotationTypes.contains(COMPONENT_ANNOTATION_CLASSNAME)) ||
+				annotationType.equals("javax.annotation.ManagedBean") ||
+				annotationType.equals("javax.inject.Named");*/
+
+        return (isStereotype && attributes != null && attributes.containsKey("value"));
+    }
 
     /**
      * Derive a default bean name from the given bean definition.
