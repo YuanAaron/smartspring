@@ -1,6 +1,8 @@
 package com.smartspring.Context.support;
 
 import com.smartspring.Context.ApplicationContext;
+import com.smartspring.beans.factory.annotation.AutowiredAnnotationProcessor;
+import com.smartspring.beans.factory.config.ConfigurableBeanFactory;
 import com.smartspring.beans.factory.support.DefaultBeanFactory;
 import com.smartspring.beans.factory.xml.XmlBeanDefinitionReader;
 import com.smartspring.core.io.FileSystemResource;
@@ -22,6 +24,7 @@ public abstract class AbstractApplicationContext implements ApplicationContext {
         Resource resource=getResourceByPath(configFile);
         reader.loadBeanDefinition(resource);
         factory.setBeanClassLoader(beanClassLoader);
+        registerBeanPostProcessors(factory);
     }
 
     public AbstractApplicationContext(String configFile) {
@@ -41,5 +44,12 @@ public abstract class AbstractApplicationContext implements ApplicationContext {
 
     public ClassLoader getBeanClassLoader() {
         return this.beanClassLoader!=null?this.beanClassLoader: ClassUtils.getDefaultClassLoader();
+    }
+
+    protected void registerBeanPostProcessors(ConfigurableBeanFactory beanFactory) {
+        AutowiredAnnotationProcessor postProcessor = new AutowiredAnnotationProcessor();
+        postProcessor.setBeanFactory(beanFactory);
+        beanFactory.addBeanPostProcessor(postProcessor);
+
     }
 }

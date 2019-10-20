@@ -6,14 +6,17 @@ import com.smartspring.beans.SimpleTypeConverter;
 import com.smartspring.beans.TypeConverter;
 import com.smartspring.beans.factory.BeanCreationException;
 import com.smartspring.beans.factory.BeanFactory;
+import com.smartspring.beans.factory.config.BeanPostProcessor;
 import com.smartspring.beans.factory.config.ConfigurableBeanFactory;
 import com.smartspring.beans.factory.config.DependencyDescriptor;
+import com.smartspring.beans.factory.config.InstantiationAwareBeanPostProcessor;
 import com.smartspring.util.ClassUtils;
 import org.apache.commons.beanutils.BeanUtils;
 
 import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -21,8 +24,20 @@ import java.util.concurrent.ConcurrentHashMap;
 public class DefaultBeanFactory extends DefaultSingletonBeanRegistry
         implements ConfigurableBeanFactory,BeanDefinitionRegistry{
 
+    private List<BeanPostProcessor> beanPostProcessors = new ArrayList<BeanPostProcessor>();
+
     private final Map<String, BeanDefinition> beanDefinitionMap = new ConcurrentHashMap<String, BeanDefinition>(64);
     private ClassLoader beanClassLoader=null;
+
+    @Override
+    public void addBeanPostProcessor(BeanPostProcessor postProcessor) {
+        this.beanPostProcessors.add(postProcessor);
+    }
+
+    @Override
+    public List<BeanPostProcessor> getBeanPostProcessors() {
+        return this.beanPostProcessors;
+    }
 
     @Override
     public void registryBeanDefinition(String beanId, BeanDefinition bd) {
@@ -78,6 +93,12 @@ public class DefaultBeanFactory extends DefaultSingletonBeanRegistry
     }
 
     protected void populateBean(BeanDefinition bd, Object bean){
+        for(BeanPostProcessor processor : this.getBeanPostProcessors()){
+            if(processor instanceof InstantiationAwareBeanPostProcessor){
+                ((InstantiationAwareBeanPostProcessor)processor).postProcessPropertyValues(bean, bd.getID());
+            }
+        }
+
         List<PropertyValue> pvs = bd.getPropertyValues();
         if (pvs == null || pvs.isEmpty()) {
             return;
@@ -110,6 +131,12 @@ public class DefaultBeanFactory extends DefaultSingletonBeanRegistry
     }
 
     private void populateBeanUseCommonBeanUtils(BeanDefinition bd, Object bean){
+        for(BeanPostProcessor processor : this.getBeanPostProcessors()){
+            if(processor instanceof InstantiationAwareBeanPostProcessor){
+                ((InstantiationAwareBeanPostProcessor)processor).postProcessPropertyValues(bean, bd.getID());
+            }
+        }
+
         List<PropertyValue> pvs = bd.getPropertyValues();
         if (pvs == null || pvs.isEmpty()) {
             return;

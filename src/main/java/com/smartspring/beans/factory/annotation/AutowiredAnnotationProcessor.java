@@ -1,6 +1,9 @@
 package com.smartspring.beans.factory.annotation;
 
+import com.smartspring.beans.BeansException;
+import com.smartspring.beans.factory.BeanCreationException;
 import com.smartspring.beans.factory.config.AutowireCapableBeanFactory;
+import com.smartspring.beans.factory.config.InstantiationAwareBeanPostProcessor;
 import com.smartspring.core.annotation.AnnotationUtils;
 import com.smartspring.util.ReflectionUtils;
 
@@ -13,7 +16,7 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
-public class AutowiredAnnotationProcessor {
+public class AutowiredAnnotationProcessor implements InstantiationAwareBeanPostProcessor {
 
     private AutowireCapableBeanFactory beanFactory;
     private String requiredParameterName = "required";
@@ -83,5 +86,38 @@ public class AutowiredAnnotationProcessor {
 
     public void setBeanFactory(AutowireCapableBeanFactory beanFactory){
         this.beanFactory = beanFactory;
+    }
+
+    @Override
+    public Object beforeInitialization(Object bean, String beanName) throws BeansException {
+        //do nothing
+        return bean;
+    }
+
+    @Override
+    public Object afterInitialization(Object bean, String beanName) throws BeansException {
+        //do nothing
+        return bean;
+    }
+
+    @Override
+    public Object beforeInstantiation(Class<?> beanClass, String beanName) throws BeansException {
+        return null;
+    }
+
+    @Override
+    public boolean afterInstantiation(Object bean, String beanName) throws BeansException {
+        //do nothing
+        return true;
+    }
+
+    @Override
+    public void postProcessPropertyValues(Object bean, String beanName) throws BeansException {
+        InjectionMetadata metadata = buildAutowiringMetadata(bean.getClass());
+        try {
+            metadata.inject(bean);
+        } catch (Throwable ex) {
+            throw new BeanCreationException(beanName, "Injection of autowired dependencies failed", ex);
+        }
     }
 }
