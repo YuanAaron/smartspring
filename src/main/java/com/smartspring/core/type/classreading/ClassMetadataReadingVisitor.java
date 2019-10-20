@@ -1,11 +1,12 @@
 package com.smartspring.core.type.classreading;
 
+import com.smartspring.core.type.ClassMetadata;
 import com.smartspring.util.ClassUtils;
 import org.springframework.asm.ClassVisitor;
 import org.springframework.asm.Opcodes;
 import org.springframework.asm.SpringAsmInfo;
 
-public class ClassMetadataReadingVisitor extends ClassVisitor /*implements ClassMetadata*/ {
+public class ClassMetadataReadingVisitor extends ClassVisitor implements ClassMetadata {
 
     private String className;
     private boolean isInterface;
