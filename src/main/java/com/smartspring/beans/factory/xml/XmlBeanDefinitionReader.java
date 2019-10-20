@@ -1,5 +1,6 @@
 package com.smartspring.beans.factory.xml;
 
+import com.smartspring.Context.annotation.ClassPathBeanDefinitionScanner;
 import com.smartspring.beans.BeanDefinition;
 import com.smartspring.beans.ConstructorArgument.ValueHolder;
 import com.smartspring.beans.PropertyValue;
@@ -32,6 +33,9 @@ public class XmlBeanDefinitionReader {
     public static final String VALUE_ATTRIBUTE = "value";
     public static final String CONSTRUCTOR_ARG_ELEMENT = "constructor-arg";
     public static final String TYPE_ATTRIBUTE = "type"; //我们目前用不到，加上将来方便扩展
+    public static final String BEANS_NAMESPACE_URI = "http://www.springframework.org/schema/beans";
+    public static final String CONTEXT_NAMESPACE_URI = "http://www.springframework.org/schema/context";
+    private static final String BASE_PACKAGE_ATTRIBUTE = "base-package";
 
     BeanDefinitionRegistry registry;
 
@@ -51,15 +55,12 @@ public class XmlBeanDefinitionReader {
             Iterator<Element> iter = root.elementIterator();
             while(iter.hasNext()){
                 Element ele = (Element)iter.next();
-                String id = ele.attributeValue(ID_ATTRIBUTE); //解析id
-                String beanClassName = ele.attributeValue(CLASS_ATTRIBUTE); //解析class
-                BeanDefinition bd = new GenericBeanDefinition(id,beanClassName);
-                if (ele.attribute(SCOPE_ATTRIBUTE)!=null) { //解析scope
-                    bd.setScope(ele.attributeValue(SCOPE_ATTRIBUTE));
+                String namespaceUri = ele.getNamespaceURI();
+                if(this.isDefaultNamespace(namespaceUri)){
+                    parseDefaultElement(ele); //普通的<bean>
+                } else if(this.isContextNamespace(namespaceUri)){
+                    parseComponentElement(ele); //例如<context:component-scan>
                 }
-                parseConstructorArgElements(ele,bd); //解析多个<constructor-arg>元素
-                parsePropertyElement(ele,bd); //解析<property>元素
-                this.registry.registryBeanDefinition(id, bd);
             }
         } catch (Exception e) {
             throw new BeanDefinitionStoreException("IOException parsing XML document from " + resource.getDescription(),e);
@@ -72,6 +73,32 @@ public class XmlBeanDefinitionReader {
                 }
             }
         }
+    }
+
+    public boolean isDefaultNamespace(String namespaceUri) {
+        return (!StringUtils.hasLength(namespaceUri) || BEANS_NAMESPACE_URI.equals(namespaceUri));
+    }
+
+    public boolean isContextNamespace(String namespaceUri){
+        return (!StringUtils.hasLength(namespaceUri) || CONTEXT_NAMESPACE_URI.equals(namespaceUri));
+    }
+
+    private void parseDefaultElement(Element ele) {
+        String id = ele.attributeValue(ID_ATTRIBUTE); //解析id
+        String beanClassName = ele.attributeValue(CLASS_ATTRIBUTE); //解析class
+        BeanDefinition bd = new GenericBeanDefinition(id,beanClassName);
+        if (ele.attribute(SCOPE_ATTRIBUTE)!=null) { //解析scope
+            bd.setScope(ele.attributeValue(SCOPE_ATTRIBUTE));
+        }
+        parseConstructorArgElements(ele,bd); //解析多个<constructor-arg>元素
+        parsePropertyElement(ele,bd); //解析<property>元素
+        this.registry.registryBeanDefinition(id, bd);
+    }
+
+    private void parseComponentElement(Element ele) {
+        String basePackages = ele.attributeValue(BASE_PACKAGE_ATTRIBUTE);
+        ClassPathBeanDefinitionScanner scanner = new ClassPathBeanDefinitionScanner(registry);
+        scanner.doScan(basePackages);
     }
 
     //解析<property>元素
